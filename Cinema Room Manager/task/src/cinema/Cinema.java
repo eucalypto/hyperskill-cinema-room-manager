@@ -21,8 +21,6 @@ public class Cinema {
         System.out.println(cinema);
 
         cinema.getTicketPrice();
-
-
     }
 
     private static int calculateIncome(int rows, int seatsPerRow) {
@@ -64,7 +62,9 @@ public class Cinema {
         System.out.println("Enter a seat number in that row:");
         int selectedSeat = scanner.nextInt();
 
-        System.out.println("Ticket price: $" + getTicketPrice(selectedRow));
+        System.out.println("Ticket price: $" + getTicketPrice(selectedRow) + "\n");
+
+        printCinemaWithSelectedSeat(selectedRow, selectedSeat);
     }
 
     private int getTicketPrice(int selectedRow) {
@@ -101,5 +101,37 @@ public class Cinema {
         }
 
         return builder.toString();
+    }
+
+    public void printCinemaWithSelectedSeat(int selectedRow, int selectedSeat) {
+        StringBuilder builder = new StringBuilder();
+
+
+        // first 2 lines
+        builder.append("Cinema:\n");
+        builder.append(" ");
+        for (int i = 1; i <= seatsPerRow; i++) {
+            builder.append(" ").append(i);
+        }
+        builder.append("\n");
+
+        // other lines
+        for (int row = 1; row <= rows; row++) {
+            builder.append(row);
+            if (row == selectedRow) {
+                for (int seat = 1; seat <= seatsPerRow; seat++) {
+                    if (seat == selectedSeat) {
+                        builder.append(" ").append("B");
+                    } else {
+                        builder.append(" S");
+                    }
+                }
+            } else {
+                builder.append(" S".repeat(seatsPerRow));
+            }
+            builder.append("\n");
+        }
+
+        System.out.println(builder.toString());
     }
 }
