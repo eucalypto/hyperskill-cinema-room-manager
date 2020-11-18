@@ -4,7 +4,7 @@ import java.util.Scanner;
 public class Main {
 
     public static void sort(int[] numbers) {
-        Arrays.sort(numbers);
+        // write your code here
     }
 
     /* Do not change code below */

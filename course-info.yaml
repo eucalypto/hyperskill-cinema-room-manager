@@ -8,8 +8,12 @@ summary: 'Cinema has been a part of the entertainment industry for a long time: 
   check available seats, see sales statistics, and more.<br/><br/>Learn more at <a
   href="https://hyperskill.org">https://hyperskill.org/projects/133</a>'
 programming_language: Java
-programming_language_version: 11 11
+programming_language_version: 11
 content:
 - Cinema Room Manager
 - Problems (1)
+- Problems (2)
+- Problems (3)
+- Problems (4)
+- Problems (5)
 mode: Study
