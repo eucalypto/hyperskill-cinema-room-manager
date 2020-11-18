@@ -7,69 +7,32 @@ import java.util.Scanner;
 public class Cinema {
 
     Scanner scanner = new Scanner(System.in);
+
     private int rows;
+    private final List<Row> seatRows = new ArrayList<>(rows);
     private int seatsPerRow;
-    private List<Integer> rowPrices;
 
     public static void main(String[] args) {
 
         Cinema cinema = new Cinema();
 
         cinema.setUp();
-        cinema.calculateRowPrices();
 
-        System.out.println(cinema);
+        cinema.printCinema();
 
-        cinema.getTicketPrice();
     }
 
-    private static int calculateIncome(int rows, int seatsPerRow) {
-        int totalSeats = rows * seatsPerRow;
+    private int getRowPrice(int rowNumber) {
+        boolean isLargeRoom = (rows * seatsPerRow) > 60;
 
-        if (totalSeats <= 60) {
-            return totalSeats * 10;
-        }
-
-        int frontRows = rows / 2;
-
-        return frontRows * seatsPerRow * 10 + (rows - frontRows) * seatsPerRow * 8;
-    }
-
-    private void calculateRowPrices() {
-        rowPrices = new ArrayList<>();
-
-        int totalSeats = rows * seatsPerRow;
-
-        if (totalSeats <= 60) {
-            for (int i = 0; i < rows; i++) {
-                rowPrices.add(10);
-            }
+        if (isLargeRoom) {
+            int largestFrontRowNumber = rows / 2;
+            return (rowNumber <= largestFrontRowNumber) ? 10 : 8;
         } else {
-            int frontRows = rows / 2;
-            for (int i = 0; i < frontRows; i++) {
-                rowPrices.add(10);
-            }
-            for (int i = 0; i < rows - frontRows; i++) {
-                rowPrices.add(8);
-            }
+            return 10;
         }
     }
 
-    private void getTicketPrice() {
-        System.out.println("Enter a row number:");
-        int selectedRow = scanner.nextInt();
-
-        System.out.println("Enter a seat number in that row:");
-        int selectedSeat = scanner.nextInt();
-
-        System.out.println("Ticket price: $" + getTicketPrice(selectedRow) + "\n");
-
-        printCinemaWithSelectedSeat(selectedRow, selectedSeat);
-    }
-
-    private int getTicketPrice(int selectedRow) {
-        return rowPrices.get(selectedRow - 1);
-    }
 
     private void setUp() {
 
@@ -78,12 +41,25 @@ public class Cinema {
 
         System.out.println("Enter the number of seats in each row:");
         seatsPerRow = scanner.nextInt();
+
+        for (int i = 0; i < rows; i++) {
+            seatRows.add(newRow(seatsPerRow, i + 1));
+        }
+
     }
 
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
+    private Row newRow(int seatsPerRow, int rowNumber) {
+        var row = new Row();
+        var price = getRowPrice(rowNumber);
+        row.price = price;
+        for (int i = 1; i <= seatsPerRow; i++) {
+            row.add(new Seat(rowNumber, i, price));
+        }
+        return row;
+    }
 
+    public void printCinema() {
+        StringBuilder builder = new StringBuilder();
 
         // first 2 lines
         builder.append("Cinema:\n");
@@ -94,44 +70,35 @@ public class Cinema {
         builder.append("\n");
 
         // other lines
-        for (int row = 1; row <= rows; row++) {
-            builder.append(row);
-            builder.append(" S".repeat(seatsPerRow));
+        seatRows.forEach(row -> {
+            builder.append(row.rowNumber);
+            row.forEach(seat -> builder.append(" ").append(seat.getOccupancyString()));
             builder.append("\n");
-        }
-
-        return builder.toString();
-    }
-
-    public void printCinemaWithSelectedSeat(int selectedRow, int selectedSeat) {
-        StringBuilder builder = new StringBuilder();
-
-
-        // first 2 lines
-        builder.append("Cinema:\n");
-        builder.append(" ");
-        for (int i = 1; i <= seatsPerRow; i++) {
-            builder.append(" ").append(i);
-        }
-        builder.append("\n");
-
-        // other lines
-        for (int row = 1; row <= rows; row++) {
-            builder.append(row);
-            if (row == selectedRow) {
-                for (int seat = 1; seat <= seatsPerRow; seat++) {
-                    if (seat == selectedSeat) {
-                        builder.append(" ").append("B");
-                    } else {
-                        builder.append(" S");
-                    }
-                }
-            } else {
-                builder.append(" S".repeat(seatsPerRow));
-            }
-            builder.append("\n");
-        }
+        });
 
         System.out.println(builder.toString());
     }
+}
+
+class Seat {
+    int rowNumber;
+    int seatNumber;
+    int price;
+    boolean isBooked = false;
+
+    Seat(int rowNumber, int seatNumber, int price) {
+        this.rowNumber = rowNumber;
+        this.seatNumber = seatNumber;
+        this.price = price;
+    }
+
+
+    public String getOccupancyString() {
+        return isBooked ? "B" : "S";
+    }
+}
+
+class Row extends ArrayList<Seat> {
+    int rowNumber;
+    int price;
 }
