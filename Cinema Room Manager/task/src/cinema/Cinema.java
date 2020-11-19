@@ -6,11 +6,12 @@ import java.util.Scanner;
 
 public class Cinema {
 
-    Scanner scanner = new Scanner(System.in);
+    static Scanner scanner = new Scanner(System.in);
 
     private int rows;
     private final List<Row> seatRows = new ArrayList<>(rows);
     private int seatsPerRow;
+    private boolean isOn = true;
 
     public static void main(String[] args) {
 
@@ -18,8 +19,40 @@ public class Cinema {
 
         cinema.setUp();
 
-        cinema.printCinema();
+        while (cinema.isOn) {
+            cinema.displayMenu();
+            var input = scanner.nextInt();
+            switch (input) {
+                case 1:
+                    cinema.printCinema();
+                    break;
+                case 2:
+                    cinema.buyTicket();
+                    break;
+                case 0:
+                    cinema.isOn = false;
+                    break;
+            }
+        }
+    }
 
+    private void buyTicket() {
+        System.out.println("Enter a row number:");
+        var selectedRow = scanner.nextInt();
+
+        System.out.println("Enter a seat number in that row:");
+        var selectedSeat = scanner.nextInt();
+
+        var seat = seatRows.get(selectedRow - 1).get(selectedSeat - 1);
+
+        seat.isBooked = true;
+        System.out.println("Ticket price: $" + seat.price + "\n");
+    }
+
+    private void displayMenu() {
+        System.out.println("1. Show the seats");
+        System.out.println("2. Buy a ticket");
+        System.out.println("0. Exit");
     }
 
     private int getRowPrice(int rowNumber) {
@@ -52,6 +85,7 @@ public class Cinema {
         var row = new Row();
         var price = getRowPrice(rowNumber);
         row.price = price;
+        row.rowNumber = rowNumber;
         for (int i = 1; i <= seatsPerRow; i++) {
             row.add(new Seat(rowNumber, i, price));
         }
